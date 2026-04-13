@@ -39,7 +39,7 @@ summary(resultado)
 
 #Visualização dos PCA
 if(!require(factoextra)) install.packages("factoextra") 
-library(factoextra)
+# library(factoextra)
 fviz_eig(resultado, addlabels = TRUE) 
 
 #Critério de Kaiser
