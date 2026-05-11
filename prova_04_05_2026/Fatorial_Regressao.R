@@ -101,7 +101,7 @@ print(modelo$coefficients, digits = 3)
 #4 - Avaliacao da precisao de previsao
 #4.1 - Analise do t-value, R^2e F-statistic
 # T- tem que ser próximo de Zero
-#o R Quadrado e o R ajustado tem que ser 
+#o R Quadrado e o R ajustado tem que ser maiores que 0.8 
 # p-value é oq aprova a hipotese ou não, se for menor que 0.05 rejeita
 
 summary(modelo)
