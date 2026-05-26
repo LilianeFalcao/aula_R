@@ -31,7 +31,12 @@ round(as.matrix(d.eucl)[1:4, 1:4], 2)  #arrendondando para duas casas decimais
 ?hclust
 
 #3.1 Metodo hierarquico de Ward  ----
-metod.ward <- hclust(d = d.eucl, method = "ward.D2")
+metod.ward2 <- hclust(d = d.eucl, method = "ward.D2")
+# Calculando a matriz cofenetica
+cor(d.eucl, cophenetic(metod.ward2))
+
+#3.1 Metodo hierarquico de Ward  ----
+metod.ward <- hclust(d = d.eucl, method = "ward.D")
 # Calculando a matriz cofenetica
 cor(d.eucl, cophenetic(metod.ward))
 
@@ -39,9 +44,25 @@ cor(d.eucl, cophenetic(metod.ward))
 metod.ligMed <- hclust(d.eucl, method = "average")
 cor(d.eucl, cophenetic(metod.ligMed))
 
-#3.3 Metodo da ligacao media
+#3.3 Metodo da ligacao Complete
 metod.complete <- hclust(d.eucl, method = "complete")
 cor(d.eucl, cophenetic(metod.complete))
+
+#3.4 Metodo da ligacao single
+metod.single <- hclust(d.eucl, method = "single")
+cor(d.eucl, cophenetic(metod.single))
+
+#3.5 Metodo da ligacao mcquitty
+metod.mcquitty <- hclust(d.eucl, method = "mcquitty")
+cor(d.eucl, cophenetic(metod.mcquitty))
+
+#3.6 Metodo da ligacao median
+metod.median <- hclust(d.eucl, method = "median")
+cor(d.eucl, cophenetic(metod.median))
+
+#3.7 Metodo da ligacao centroid
+metod.centroid <- hclust(d.eucl, method = "centroid")
+cor(d.eucl, cophenetic(metod.centroid))
 
 #Pela ligacao media o valor da correlacao foi maior, portanto sera o utilizado
 
@@ -80,11 +101,10 @@ rownames(dados.p)[grupo == 2]
 #5.3 Visualizando o resultado do agrupamento no dendrograma ----
 fviz_dend(metod.ligMed, k = 2, # Dividido em 2 grupos
           cex = 0.5, 
-          k_colors = c("#2E9FDF", "#00BB0C", "#E7B800", "#FC4E07"),
+          k_colors = c("#2E9FDF", "#8B2B36"),
           color_labels_by_k = TRUE, # Colocando cada grupo de uma cor
           rect = TRUE # Adicionando um retangulo nos grupos
 )
-
 
 
 
