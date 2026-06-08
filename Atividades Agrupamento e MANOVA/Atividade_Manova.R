@@ -6,6 +6,11 @@ library(Hotelling)
 if(!require(car)) install.packages("car")
 library(car)
 
+# A ANOVA, TESTE - T e a MANOVA são métodos de comparar as médias,
+# Onde a ANOVA é para 2 variáveis
+# O Teste-T é para 
+# E a MANOVA é para 3 ou mais variáveis
+
 # Atividade 1 -------------------------------------------------------------
 
 dados <- data.frame(
@@ -74,14 +79,22 @@ summary(modelo, test="Wilks")  #Teste lambda de Wilks
 
 summary.aov(modelo)
 
+# Aqui ele dá a relação entre as médias de forma estátistica, ou seja, se o P-Value próximo ou igual à Zero, significa que as médias
+# São estatisticamente diferentes e se o P-Value é > ou igual a 0.05, as médias são estatisticamente iguais.
+
 # 2. Teste de Tukey (Post-Hoc) para detalhar onde estão as diferenças
 TukeyHSD(anova_matematica)
 TukeyHSD(anova_estatistica)
 TukeyHSD(anova_programacao)
 
+#2. Interpretação pelo Valor p (P-valor) ou Intervalo de ConfiançaSe você estiver gerando a análise em softwares como R, Python ou 
+#Minitab:Se o valor p < 0,05: A diferença entre as médias daquele par específico é estatisticamente significativa.Se o valor p > 0,05: 
+#Não há diferença estatística significativa entre os dois grupos.Intervalo de Confiança: Se o intervalo gerado para a diferença entre duas 
+#médias cruzar o valor 0 (ex: -2 até +5), significa que eles são estatisticamente iguais.
+
 # 3. Médias gerais para o desempenho global
 
-aggregate(. ~ Ensino, data = dados, FUN = mean)
+aggregate(. ~ Ensino, data = dados, mean)
 
 # f) Em quais disciplinas os grupos diferem?  -----------------------------
 
@@ -123,7 +136,7 @@ dados <- data.frame(
 
 # a) Obtenha as médias para cada grupo.  ----------------------------------
 
-medias_grupo <- aggregate(. ~ Treinamento, data = dados, FUN = mean)
+medias_grupo <- aggregate(. ~ Treinamento, data = dados, mean)
 print(medias_grupo)
 
 # b) Verifique os pressupostos da MANOVA: ---------------------------------

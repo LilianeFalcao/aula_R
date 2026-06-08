@@ -23,7 +23,7 @@ View(clientes)
 media <-  colMeans(clientes[,2:4])
 print(media)
 
-# As médias tem escalas muito diferentes, principalmente olhando a variável "Alimentacao" em relação
+# As médias tem escalas muito diferentes, principalmente olhando a variável "Alimentação" em relação
 # as demais variáveis
 
 #Padronizando
@@ -53,11 +53,16 @@ cor(d.eucl, cophenetic(metod.ward))
 #D - Construa o dendrograma.
 fviz_dend(metod.ward)
 
+#ou pode usar assim:  
+plot(metod.ward)
+# Dendograma mais simplificado
+
 #E - Indique quantos grupos parecem mais adequados.
 
 #A melhor opção é com 4 grupos, porém com  10 grupos também é uma opção aceitável
 nb <- NbClust(dados.p, distance = "euclidean", min.nc = 2,
               max.nc = 10, method ="ward.D2", index = "all")
+
 #F - Interprete os grupos encontrados.
 
 grupo <- cutree(metod.ward,k=4)
@@ -75,8 +80,6 @@ fviz_dend(metod.ward, k = 4, # Dividido em 4 grupos
           color_labels_by_k = TRUE, # Colocando cada grupo de uma cor
           rect = TRUE # Adicionando um retangulo nos grupos
 )
-
-
 
 # Atividade 2 -------------------------------------------------------------
 
@@ -116,6 +119,8 @@ round(as.matrix(d.eucl)[1:4, 1:4], 2)
 #c) Ajuste modelos de cluster utilizando: Método de Ward.D2, Single, Complete.
 
 ?hclust
+
+#A correlação entre a distância Euclidiana e a matriz Conphenetic, a que a relação for maior é o melhor método para serem utilizados
 
 #3.1 Metodo hierarquico de Ward  ----
 metod.ward <- hclust(d = d.eucl, method = "ward.D2")
@@ -160,7 +165,14 @@ fviz_dend(metod.complete, k = 3, # Dividido em 4 grupos
           rect = TRUE # Adicionando um retangulo nos grupos
 )
 
+#Ajudando na interpretacao dos resultados
 
+municipios$Grupo <- grupo
+dados <- municipios[,2:6]
+aggregate(dados, by = list(Grupo = dados$Grupo), mean)
+
+# Com isso é gerada as médias em relação aos grupos adquiridos, para que seja feitas as análise dos dados
+# Interpretando os dados
 
 # Atividade 3 -------------------------------------------------------------
 
