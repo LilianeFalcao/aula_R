@@ -50,6 +50,13 @@ cor(d.eucl, cophenetic(metod.ward))
 #O Valor obtido foi 0.923, e quanto mais perto de 1 o agrupamento é excelente. 
 #A árvore reflete muito bem a realidade dos seus dados originais.
 
+#ou
+
+#O coeficiente de correlação cofenética foi de 0,923,
+#indicando que o dendrograma preserva muito bem as distâncias originais dos dados.
+#Valores acima de 0,8 geralmente são considerados bons.
+
+
 #D - Construa o dendrograma.
 fviz_dend(metod.ward)
 
@@ -59,7 +66,7 @@ plot(metod.ward)
 
 #E - Indique quantos grupos parecem mais adequados.
 
-#A melhor opção é com 4 grupos, porém com  10 grupos também é uma opção aceitável
+#A maioria dos índices sugeriu 4 grupos. Porém com  10 grupos também é uma opção aceitável
 nb <- NbClust(dados.p, distance = "euclidean", min.nc = 2,
               max.nc = 10, method ="ward.D2", index = "all")
 
@@ -263,12 +270,17 @@ fviz_dend(metod.average, k = 3, # Dividido em 4 grupos
 
 # Há grupos com risco de evasão? 
 
-#Sim, o grupo amarelo tem maior risco de evasão, pois a linha preta superior mostra que o grupo amarelo se funde aos demais 
-#em um nível de dissimilaridade muito alto (perto da altura ~ 2.5). Isso significa que o comportamento deles destoa 
-#completamente do padrão dos alunos azuis.
+#Sim. O grupo de baixo desempenho apresenta maior risco de evasão, pois reúne alunos com menor frequência, menor dedicação aos estudos, 
+#maior número de faltas e menores médias acadêmicas. 
+#Esses fatores são frequentemente associados ao abandono escolar.
 
 
 #Existe relação entre frequência e desempenho?
+
+#Sim. Os agrupamentos mostram que alunos com maiores níveis de frequência apresentam também maiores médias acadêmicas e menor número de faltas. 
+#Por outro lado, os grupos com menor frequência concentram os alunos de menor desempenho. Isso sugere uma relação positiva entre frequência e
+#rendimento acadêmico.
+
 
 #O dendrograma confirma uma forte relação de dependência positiva entre frequência e desempenho.
 #Agrupamento por Similaridade: O algoritmo agrupa elementos que se comportam de forma parecida. 
@@ -279,7 +291,13 @@ fviz_dend(metod.average, k = 3, # Dividido em 4 grupos
 
 
 
+# Interpretação -----------------------------------------------------------
 
+clientes$Grupo <- grupo
+
+aggregate(clientes[,2:4],
+          by=list(Grupo=clientes$Grupo),
+          mean)
 
 
 
