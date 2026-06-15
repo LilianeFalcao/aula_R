@@ -6,10 +6,13 @@ library(Hotelling)
 if(!require(car)) install.packages("car")
 library(car)
 
-# A ANOVA, TESTE - T e a MANOVA são métodos de comparar as médias,
-# Onde a ANOVA é para 2 variáveis
-# O Teste-T é para 
-# E a MANOVA é para 3 ou mais variáveis
+if(!require(MVN)) install.packages("MVN")
+library(MVN)
+
+# Teste t: compara médias de dois grupos para uma variável resposta.
+# ANOVA: compara médias de três ou mais grupos para uma variável resposta.
+# MANOVA: compara médias de três ou mais grupos considerando simultaneamente
+# duas ou mais variáveis resposta.
 
 # Atividade 1 -------------------------------------------------------------
 
@@ -38,12 +41,40 @@ print(medias_grupo)
 # b) Verifique os pressupostos da MANOVA: ---------------------------------
 # normalidade multivariada; 
 
+#Isso testa apenas normalidade univariada.
 # Matemática por grupo
 tapply(dados$Matematica, dados$Ensino, shapiro.test)#é normal
 # Estatística por grupo
 tapply(dados$Estatistica, dados$Ensino, shapiro.test)#é normal
 # Programação por grupo
 tapply(dados$Programacao, dados$Ensino, shapiro.test)#é normal
+
+
+#H0: Os dados seguem distribuição normal multivariada.
+#H1: Os dados não seguem distribuição normal multivariada.
+
+#se p > 0,05 não rejeitamos H₀ e assumimos normalidade multivariada.
+# Grupo Tradicional
+mvn(
+  data = subset(dados, Ensino == "Tradicional")[,c("Matematica","Estatistica","Programacao")],
+  mvnTest = "mardia"
+)
+
+# Grupo Híbrida
+mvn(
+  data = subset(dados, Ensino == "Hibrida")[,c("Matematica","Estatistica","Programacao")],
+  mvnTest = "mardia"
+)
+
+# Grupo Projetos
+mvn(
+  data = subset(dados, Ensino == "Projetos")[,c("Matematica","Estatistica","Programacao")],
+  mvnTest = "mardia"
+)
+
+#A normalidade multivariada foi avaliada por meio do teste de Mardia para cada grupo analisado. As hipóteses testadas foram: 
+#H₀: os dados seguem distribuição normal multivariada; H₁: os dados não seguem distribuição normal multivariada. Como os valores de p foram superiores 
+#a 0,05 para os grupos avaliados, não houve evidências para rejeitar H₀, indicando que o pressuposto de normalidade multivariada da MANOVA foi atendido.
 
 #Para o Teste de Levene, a hipótese nula - H0 assume que as variâncias dos grupos são iguais.
 # Olhando para a coluna Pr(>F) (os p-valores)
@@ -68,7 +99,7 @@ summary(modelo)  #Teste Pillai
 summary(modelo, test="Wilks")  #Teste lambda de Wilks
 
 #Os resultados dos 2 testes, de Lambda de Wilks e de Pillais, são bem menores que 0.05,
-#sendo Pillai ->  52 2.068e-07 *** e Lambda Wilks ->50 4.438e-13 ***
+#sendo Pillai ->  Pr(>F) = 2.068e-07 < 0.05 *** e Lambda Wilks ->50 4.438e-13 ***
 
 #Nesse caso a hipotese nula deve ser rejeitada, pois existe uma diferençaa estatisticamente significativa no desempenho dos alunos 
 #(considerando Matemática, Estatística e Programação juntas) dependendo do método de ensino utilizado (Tradicional, Híbrida ou Projetos). 
@@ -83,6 +114,10 @@ summary.aov(modelo)
 # São estatisticamente diferentes e se o P-Value é > ou igual a 0.05, as médias são estatisticamente iguais.
 
 # 2. Teste de Tukey (Post-Hoc) para detalhar onde estão as diferenças
+anova_matematica <- aov(Matematica ~ Ensino, data=dados)
+anova_estatistica <- aov(Estatistica ~ Ensino, data=dados)
+anova_programacao <- aov(Programacao ~ Ensino, data=dados)
+
 TukeyHSD(anova_matematica)
 TukeyHSD(anova_estatistica)
 TukeyHSD(anova_programacao)
@@ -159,14 +194,17 @@ leveneTest(Resistencia ~ Treinamento, data = dados)
 leveneTest(Flexibilidade ~ Treinamento, data = dados)
 
 #Como todos os valores ficaram acima de (0,05), significa que a dispersão dos treinamento
-#é estatisticamente equivalente entre os três métodos de exercício (Força, Resistencia e Flexibilidade).
+#A variância das medidas é homogênea entre os grupos de treinamento
+#(Musculação, Funcional e Cross).
 
 # c) Ajuste o modelo MANOVA.  ---------------------------------------------
 modelo <- manova(cbind(Forca, Resistencia, Flexibilidade) ~ Treinamento, data=dados)
 
 # d) Interprete os testes: ------------------------------------------------
 
-#H0:As médias dos treinamentos combinados são iguais entre os três métodos de exercício (Força, Resistencia e Flexibilidade).
+# H0: Os grupos de treinamento (Musculação, Funcional e Cross)
+# possuem o mesmo vetor de médias para Força, Resistência e Flexibilidade.
+
 summary(modelo)  #Teste Pillai
 summary(modelo, test="Wilks")  #Teste lambda de Wilks
 
@@ -195,7 +233,10 @@ aggregate(dados[, 2:4], by = list(Metodologia = dados$Treinamento), FUN = mean)
 #Flexibilidade: A metodologia é parecida entre si ((p > 0,05)).
 
 # g) Qual metodologia apresentou melhor desempenho global?  ---------------
-
+#A metodologia Cross apresentou o melhor desempenho global. Embora os três grupos tenham médias semelhantes em Resistência e Flexibilidade,
+#o grupo Cross obteve uma média de Força substancialmente superior às demais metodologias. Como a análise MANOVA indicou diferença significativa entre os
+#grupos e a ANOVA univariada mostrou que essa diferença ocorre principalmente na variável Força, conclui-se que o treinamento Cross foi o que apresentou o 
+#melhor resultado geral entre os métodos avaliados.
 
 
 
